@@ -1,13 +1,18 @@
 Coding:
-- ESLint
-- Prettier
-- Test environment (dev & prod)
-- Run it locally
+
+-   Add Return types for my functions
+-   Test environment (dev & prod)
+-   Tests
 
 Visuals:
-- Intro page
+
+-   Intro page
 
 Done:
-- React
-- TypeScript
-- Yarn
+
+-   React
+-   TypeScript
+-   Yarn
+-   Run it locally
+-   ESLint
+-   Prettier

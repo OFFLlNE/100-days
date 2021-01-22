@@ -1,36 +1,31 @@
 {
-    "compilerOptions": {
-      "declaration": true,
-      "declarationDir": "build/types",
-      "target": "es5",
-      "lib": [
-        "dom",
-        "dom.iterable",
-        "esnext"
-      ],
-      "allowJs": true,
-      "skipLibCheck": true,
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true,
-      "strict": true,
-      "strictNullChecks": true,
-      "forceConsistentCasingInFileNames": true,
-      "module": "esnext",
-      "moduleResolution": "node",
-      "resolveJsonModule": true,
-      "isolatedModules": true,
-      "noEmit": true,
-      "jsx": "react"
-    },
-    "include": [
-      "__mocks__/",
-      "lib/",
-      ".eslintrc.js",
-      "custom.d.ts",
-      "declarations.d.ts",
-      "global.d.ts",
-      "index.ts",
-      "jest.setup.ts",
-      "rollup.config.js",
-    ]
-  }
+  "compilerOptions": {
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "module": "commonjs",
+    "target": "es5",
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
+    "removeComments": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "allowJs": true,
+    "baseUrl": "./",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "downlevelIteration": true,
+    "paths": {
+      "components/*": [
+        "src/components/*"
+      ]
+    }
+  },
+  "include": [
+    "./src",
+    "./webpack.config.ts"
+  ]
+}
