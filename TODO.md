@@ -1,18 +1,22 @@
 Coding:
 
--   Add Return types for my functions
--   Test environment (dev & prod)
--   Tests
+- Dev environment (dev & prod)
+- Tests
+- Continue on calculator
+- Read:
+  - Hooks
+  - Typescript
 
 Visuals:
 
--   Intro page
+- Intro page
 
 Done:
 
--   React
--   TypeScript
--   Yarn
--   Run it locally
--   ESLint
--   Prettier
+- React
+- TypeScript
+- Yarn
+- Run it locally
+- ESLint
+- Prettier
+- Add Return types for my functions
