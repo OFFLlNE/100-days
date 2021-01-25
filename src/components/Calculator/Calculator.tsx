@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 
 import "./Calculator.scss";
 
@@ -15,22 +15,28 @@ import "./Calculator.scss";
 const CALCULATOR_BUTTONS = ["1","2","3","*","4","5","6","/","7","8","9","+","AC","0","=", "-"];
 
 const Calculator = (): JSX.Element => {
+  const [input, setInput] = useState("");
+
   return (
     <>
       <div className="calculator--container">
         <div className="calculator--input-screen">
-          <input />
+          <input value={input} />
         </div>
         {CALCULATOR_BUTTONS.map((buttonContent) => (
-          <CalculatorButton key={buttonContent} content={buttonContent} />
+          <CalculatorButton key={buttonContent} content={buttonContent} onButtonClick={setInput} />
         ))}
       </div>
     </>
   );
 };
-
-const CalculatorButton = (prop: {content: string}): JSX.Element => {
-  return <button className="calculator--button">{prop.content}</button>;
+// Change any to actual type
+const CalculatorButton = (prop: {content: string; onButtonClick: any}): JSX.Element => {
+  return (
+    <button onClick={() => prop.onButtonClick(prop.content)} className="calculator--button">
+      {prop.content}
+    </button>
+  );
 };
 
 export default Calculator;
