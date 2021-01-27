@@ -14,44 +14,58 @@ import "./Calculator.scss";
 // eslint-disable-next-line
 const CALCULATOR_BUTTONS = ["1","2","3","*","4","5","6","/","7","8","9","+","AC","0","=", "-"];
 const NUMBER_STRINGS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+const MATH_ACTIONS = ["*", "/", "+", "-"];
 
 const Calculator = (): JSX.Element => {
   const [input, setInput] = useState("");
-  const [numberMemory, setNumberMemory] = useState(null);
+  const [previousInput, setPreviousInput] = useState(null);
   const [currentOperator, setCurrentOperator] = useState(null);
 
+  const doMath = () => {
+    const prev = parseFloat(previousInput);
+    const current = parseFloat(input);
+    if (isNaN(prev) || isNaN(current)) return;
+    setInput(operatorFunction[currentOperator](prev, current));
+    setCurrentOperator(null);
+    setPreviousInput(null);
+  };
+
   const handleActionOnInput = ({variable}) => {
-    if (NUMBER_STRINGS.includes(variable)) return setInput(input + variable);
-    console.log("Input here? ", input);
+    if (NUMBER_STRINGS.includes(variable)) {
+      if (currentOperator === "=") {
+        setInput(variable);
+        setCurrentOperator(null);
+      } else {
+        setInput(input + variable);
+      }
+    }
+    if (MATH_ACTIONS.includes(variable)) {
+      if (input === "") return;
+      if (previousInput !== null) {
+        console.log("I am about to do math");
 
-    setNumberMemory(parseFloat(input));
-    setInput("");
-    const symbol = variable;
-    // For some reason log seems to happen too fast that the state is not updated yet
-    console.log("Symbol and saved input: ", symbol, numberMemory);
+        doMath();
+        return;
+      }
+      setPreviousInput(parseFloat(input));
+      setInput("");
+      setCurrentOperator(variable);
+    }
+    if (variable === "AC") {
+      setPreviousInput(null);
+      setInput("");
+      setCurrentOperator(null);
+    }
+    if (variable === "=") {
+      doMath();
+    }
 
-    // if (prevNumber) return operatorFunction[symbol](prevNumber, newNumber);
-    // if (symbol === "=") return operatorFunction[currentOperator](prevNumber, newNumber);
-    // switch (symbol) {
-    //   case "/": {
-    //     return prevNumber / newNumber;
-    //   }
-    //   case "*": {
-    //     return prevNumber * newNumber;
-    //   }
-    //   case "+": {
-    //     return prevNumber + newNumber;
-    //   }
-    //   case "-": {
-    //     return prevNumber - newNumber;
-    //   }
-    //   case "AC": {
-    //     return 0;
-    //   }
-    //   default: {
-    //     return 1;
-    //   }
-    // }
+    // Display some values that happen inbetween
+    // Figure out when doing 2*2*2*2 stuff. Maybe I need to introduce value state as well
+  };
+
+  const handleCurrentState = () => {
+    console.log("Current state on click is: ", input, previousInput, currentOperator);
   };
 
   return (
@@ -67,6 +81,9 @@ const Calculator = (): JSX.Element => {
             onButtonClick={(value) => handleActionOnInput({variable: value})}
           />
         ))}
+        <button type="button" onClick={() => handleCurrentState()}>
+          Click me for STate
+        </button>
       </div>
     </>
   );
