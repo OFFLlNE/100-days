@@ -1,15 +1,8 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 
 import "./Calculator.scss";
-
-// Click on number adds number to input
-// Allow manually typing input
-
-// Can I do it without using state? Hooks?
-// Add parenthesis support?
-// Add random number generator?
-
 // Styling
+// Proper return types
 
 // eslint-disable-next-line
 const CALCULATOR_BUTTONS = ["1","2","3","*","4","5","6","/","7","8","9","+","AC","0","=", "-"];
@@ -17,62 +10,66 @@ const NUMBER_STRINGS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 const MATH_ACTIONS = ["*", "/", "+", "-"];
 
 const Calculator = (): JSX.Element => {
-  const [input, setInput] = useState("");
-  const [previousInput, setPreviousInput] = useState(null);
-  const [currentOperator, setCurrentOperator] = useState(null);
+  const [currentInput, setCurrentInput] = useState("");
+  const [previousInput, setPreviousInput] = useState("");
+  const [currentOperation, setCurrentOperation] = useState(undefined);
 
   const doMath = () => {
-    const prev = parseFloat(previousInput);
-    const current = parseFloat(input);
-    if (isNaN(prev) || isNaN(current)) return;
-    setInput(operatorFunction[currentOperator](prev, current));
-    setCurrentOperator(null);
-    setPreviousInput(null);
+    const prevNum = parseFloat(previousInput);
+    const currentNum = parseFloat(currentInput);
+    if (isNaN(prevNum) || isNaN(currentNum)) return;
+    setCurrentOperation(undefined);
+    setPreviousInput("");
+    setCurrentInput(operatorFunction[currentOperation](prevNum, currentNum));
+  };
+
+  const handleNumberInput = (number) => {
+    if (typeof currentInput === "string") {
+      setCurrentInput(currentInput + number);
+    } else {
+      // Figure out how I can handle this, happens when I Chain 2*2*2*2
+    }
+  };
+
+  const handleOperation = (operation) => {
+    if (currentInput === "") return;
+    if (previousInput !== "") return doMath();
+    setPreviousInput(currentInput);
+    setCurrentOperation(operation);
+    setCurrentInput("");
+  };
+
+  const clearAll = () => {
+    setCurrentInput("");
+    setPreviousInput("");
+    setCurrentOperation(undefined);
   };
 
   const handleActionOnInput = ({variable}) => {
     if (NUMBER_STRINGS.includes(variable)) {
-      if (currentOperator === "=") {
-        setInput(variable);
-        setCurrentOperator(null);
-      } else {
-        setInput(input + variable);
-      }
+      handleNumberInput(variable);
     }
     if (MATH_ACTIONS.includes(variable)) {
-      if (input === "") return;
-      if (previousInput !== null) {
-        console.log("I am about to do math");
-
-        doMath();
-        return;
-      }
-      setPreviousInput(parseFloat(input));
-      setInput("");
-      setCurrentOperator(variable);
+      handleOperation(variable);
     }
     if (variable === "AC") {
-      setPreviousInput(null);
-      setInput("");
-      setCurrentOperator(null);
+      clearAll();
     }
     if (variable === "=") {
       doMath();
     }
-
-    // Display some values that happen inbetween
-    // Figure out when doing 2*2*2*2 stuff. Maybe I need to introduce value state as well
   };
 
   const handleCurrentState = () => {
-    console.log("Current state on click is: ", input, previousInput, currentOperator);
+    console.log("Current state on click is: ", currentInput, previousInput, currentOperation);
   };
 
   return (
     <>
       <div className="calculator--container">
         <div className="calculator--input-screen">
-          <input value={input} />
+          <input value={currentInput} onChange={(e) => setCurrentInput(e.target.value)} />
+          <input value={previousInput} />
         </div>
         {CALCULATOR_BUTTONS.map((buttonContent) => (
           <CalculatorButton
@@ -88,7 +85,7 @@ const Calculator = (): JSX.Element => {
     </>
   );
 };
-// Change any to actual type
+
 const CalculatorButton = (prop: {content: string; onButtonClick: any}): JSX.Element => {
   return (
     <button onClick={() => prop.onButtonClick(prop.content)} className="calculator--button">
@@ -96,18 +93,6 @@ const CalculatorButton = (prop: {content: string; onButtonClick: any}): JSX.Elem
     </button>
   );
 };
-
-function checkIfNumber(toBeChecked) {
-  return toBeChecked === typeof "number";
-}
-
-// Click on symbol
-// if there is numberMemory
-//// return numbermemory (symbol) newNumber
-// if symbol === "="
-//// return numberMemory currentOperator newNumber
-// return {newNumber, symbolAction}
-// Clear the current input
 
 const operatorFunction = {
   "+": (x, y) => x + y,
