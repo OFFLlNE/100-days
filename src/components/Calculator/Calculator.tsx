@@ -2,7 +2,6 @@ import React, {useState, useEffect} from "react";
 
 import "./Calculator.scss";
 // Styling
-// Proper return types
 // Start tests
 
 // eslint-disable-next-line
@@ -64,10 +63,6 @@ const Calculator = (): JSX.Element => {
     }
   };
 
-  const handleCurrentState = () => {
-    console.log("Current state on click is: ", currentInput, previousInput, currentOperation);
-  };
-
   return (
     <>
       <div className="calculator--container">
@@ -82,9 +77,6 @@ const Calculator = (): JSX.Element => {
             onButtonClick={(value) => handleActionOnInput({variable: value})}
           />
         ))}
-        <button type="button" onClick={() => handleCurrentState()}>
-          Click me for STate
-        </button>
       </div>
     </>
   );

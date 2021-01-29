@@ -1,0 +1,19 @@
+.game {
+  &--board {
+    margin: 0 auto;
+    background-color: rgb(67, 67, 71);
+    width: 500px;
+    height: 500px;
+  }
+
+  &--field-element {
+    height: 49px;
+    width: 49px;
+    margin: 0.5px;
+  }
+}
+
+.X {
+  color: red;
+  background-color: aqua;
+}
