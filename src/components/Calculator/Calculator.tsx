@@ -3,6 +3,7 @@ import React, {useState, useEffect} from "react";
 import "./Calculator.scss";
 // Styling
 // Proper return types
+// Start tests
 
 // eslint-disable-next-line
 const CALCULATOR_BUTTONS = ["1","2","3","*","4","5","6","/","7","8","9","+","AC","0","=", "-"];
@@ -14,11 +15,12 @@ const Calculator = (): JSX.Element => {
   const [previousInput, setPreviousInput] = useState("");
   const [currentOperation, setCurrentOperation] = useState(undefined);
 
-  const doMath = () => {
+  const doMath = ({operation}) => {
     const prevNum = parseFloat(previousInput);
     const currentNum = parseFloat(currentInput);
     if (isNaN(prevNum) || isNaN(currentNum)) return;
-    setCurrentOperation(undefined);
+
+    setCurrentOperation(operation);
     setPreviousInput("");
     setCurrentInput(operatorFunction[currentOperation](prevNum, currentNum));
   };
@@ -27,13 +29,15 @@ const Calculator = (): JSX.Element => {
     if (typeof currentInput === "string") {
       setCurrentInput(currentInput + number);
     } else {
-      // Figure out how I can handle this, happens when I Chain 2*2*2*2
+      setPreviousInput(currentInput + "");
+      setCurrentInput(number);
     }
   };
 
   const handleOperation = (operation) => {
     if (currentInput === "") return;
-    if (previousInput !== "") return doMath();
+    if (previousInput !== "") return doMath({operation});
+
     setPreviousInput(currentInput);
     setCurrentOperation(operation);
     setCurrentInput("");
@@ -56,7 +60,7 @@ const Calculator = (): JSX.Element => {
       clearAll();
     }
     if (variable === "=") {
-      doMath();
+      doMath({operation: variable});
     }
   };
 
@@ -99,7 +103,7 @@ const operatorFunction = {
   "-": (x, y) => x - y,
   "*": (x, y) => x * y,
   "/": (x, y) => x / y,
-  "": (x, y) => y
+  "=": (x, y) => y
 };
 
 export default Calculator;
