@@ -1,19 +1,51 @@
 .calculator {
+  padding: 30px;
   &--container {
+    margin: 0 auto;
     background-color: rgb(175, 253, 227);
     width: 350px;
     height: 400px;
     display: flex;
     flex-wrap: wrap;
-    padding: 5px;
+    padding: 15px;
+    border-radius: 5px;
   }
 
   &--input-screen {
     flex: 0 0 100%;
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 5px;
+  }
+
+  .input-value {
+    text-align: right;
+    flex: 0 0 95%;
+    margin: 0 auto;
+    border-style: none;
+  }
+
+  &--input-current-value {
+    @extend .input-value;
+    border-radius: 0px 0px 5px 5px;
+    font-weight: 600;
+    font-size: 24px;
+  }
+
+  &--input-previous-value {
+    @extend .input-value;
+    border-radius: 5px 5px 0px 0px;
+    font-size: 14px;
   }
 
   &--button {
     flex: 1 1 23%;
+    font-size: 16px;
     margin: 2px;
+    border-radius: 10px;
+    background-color: rgb(224, 245, 224);
+    &:hover {
+      background-color: rgb(187, 207, 186);
+    }
   }
 }

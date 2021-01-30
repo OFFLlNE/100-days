@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from "react";
 
 import "./Calculator.scss";
-// Styling
-// Start tests
+// Avoid letter input
+// Add operator to previousInput
+// Add tests
 
 // eslint-disable-next-line
 const CALCULATOR_BUTTONS = ["1","2","3","*","4","5","6","/","7","8","9","+","AC","0","=", "-"];
@@ -64,11 +65,15 @@ const Calculator = (): JSX.Element => {
   };
 
   return (
-    <>
+    <div className="calculator">
       <div className="calculator--container">
         <div className="calculator--input-screen">
-          <input value={currentInput} onChange={(e) => setCurrentInput(e.target.value)} />
-          <input value={previousInput} />
+          <input className="calculator--input-previous-value" value={previousInput} />
+          <input
+            className="calculator--input-current-value"
+            value={currentInput}
+            onChange={(e) => setCurrentInput(e.target.value)}
+          />
         </div>
         {CALCULATOR_BUTTONS.map((buttonContent) => (
           <CalculatorButton
@@ -78,7 +83,7 @@ const Calculator = (): JSX.Element => {
           />
         ))}
       </div>
-    </>
+    </div>
   );
 };
 
