@@ -4,7 +4,6 @@ import classNames from "classnames";
 import "./Game.scss";
 
 // TODO:
-// Figure out the unique key for the Element mapping
 // Somehow I need to update GAME FIELD in updateField method. Maybe using gamefield in the state.
 
 const GAME_FIELD = [
@@ -73,8 +72,13 @@ const Game = (): JSX.Element => {
   return (
     <div className="game">
       <div className="game--board">
-        {GAME_FIELD.map((fieldRow) =>
-          fieldRow.map((fieldElement) => <FieldElement key={fieldElement} content={fieldElement} />)
+        {GAME_FIELD.map((fieldRow, rowIndex) =>
+          fieldRow.map((fieldElement, elementIndex) => (
+            <FieldElement
+              key={rowIndex.toString() + elementIndex.toString()}
+              content={fieldElement}
+            />
+          ))
         )}
         <button onClick={() => retrieveCoordinates()}>Get M coordinates</button>
       </div>
