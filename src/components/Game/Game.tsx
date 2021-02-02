@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import './Game.scss';
 
 // TODO:
-// Some bug where it skips some steps at some point but doing multiple movements in one move
+// Some bug where it skips some steps at some point but doing multiple movements in one move --- seems to appear when moving down
 
 const GAME_FIELD = [
   ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
@@ -41,9 +41,9 @@ const Game = (): JSX.Element => {
     // Gets coordinateString for next step from MOVEMENT_PATH
     if (currentIndex === 35) return { nextXCoord: xCoord, nextYCoord: yCoord };
     const nextStepCoordinates = MOVEMENT_PATH[currentIndex + 1];
+
     const nextXCoord = nextStepCoordinates.split('')[0];
     const nextYCoord = nextStepCoordinates.split('')[1];
-    // console.log("Next step will be: ", {nextXCoord, nextYCoord});
 
     return { nextXCoord, nextYCoord };
   };
@@ -52,13 +52,26 @@ const Game = (): JSX.Element => {
     const currentGameField = [...gameField];
     currentGameField[previousStep.y][previousStep.x] = 'O';
     currentGameField[nextStep.nextYCoord][nextStep.nextXCoord] = 'M';
-
     setGameField(currentGameField);
   };
 
   const moveM = () => {
+    console.log('gameField: ', gameField);
+
     gameField.map((fieldRow) => {
+      console.log('Mapping');
+
       if (fieldRow.indexOf('M') >= 0) {
+        console.log(
+          'Updating: previousStep: X: ',
+          fieldRow.indexOf('M'),
+          'Y: ',
+          gameField.indexOf(fieldRow),
+        );
+        console.log(
+          'Updating: nextStep: ',
+          move(fieldRow.indexOf('M'), gameField.indexOf(fieldRow)),
+        );
         updateField(
           { x: fieldRow.indexOf('M'), y: gameField.indexOf(fieldRow) },
           move(fieldRow.indexOf('M'), gameField.indexOf(fieldRow)),
