@@ -1,22 +1,22 @@
-import React from "react";
-import classNames from "classnames";
+import React, { useState } from 'react';
+import classNames from 'classnames';
 
-import "./Game.scss";
+import './Game.scss';
 
 // TODO:
-// Somehow I need to update GAME FIELD in updateField method. Maybe using gamefield in the state.
+// Some bug where it skips some steps at some point but doing multiple movements in one move
 
 const GAME_FIELD = [
-  ["X", "X", "X", "X", "X", "X", "X", "X", "X", "X"],
-  ["X", "X", "X", "X", "X", "X", "O", "O", "O", "X"],
-  ["X", "O", "O", "O", "X", "X", "O", "X", "O", "O"],
-  ["X", "O", "X", "O", "X", "X", "O", "X", "X", "X"],
-  ["X", "O", "X", "O", "O", "X", "O", "O", "X", "X"],
-  ["X", "O", "X", "X", "O", "X", "X", "O", "X", "X"],
-  ["X", "O", "X", "O", "O", "X", "X", "O", "O", "X"],
-  ["X", "O", "X", "O", "X", "X", "X", "X", "O", "X"],
-  ["M", "O", "X", "O", "O", "O", "O", "O", "O", "X"],
-  ["X", "X", "X", "X", "X", "X", "X", "X", "X", "X"]
+  ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+  ['X', 'X', 'X', 'X', 'X', 'X', 'O', 'O', 'O', 'X'],
+  ['X', 'O', 'O', 'O', 'X', 'X', 'O', 'X', 'O', 'O'],
+  ['X', 'O', 'X', 'O', 'X', 'X', 'O', 'X', 'X', 'X'],
+  ['X', 'O', 'X', 'O', 'O', 'X', 'O', 'O', 'X', 'X'],
+  ['X', 'O', 'X', 'X', 'O', 'X', 'X', 'O', 'X', 'X'],
+  ['X', 'O', 'X', 'O', 'O', 'X', 'X', 'O', 'O', 'X'],
+  ['X', 'O', 'X', 'O', 'X', 'X', 'X', 'X', 'O', 'X'],
+  ['M', 'O', 'X', 'O', 'O', 'O', 'O', 'O', 'O', 'X'],
+  ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
 ];
 
 // 35 steps
@@ -27,6 +27,8 @@ const MOVEMENT_PATH = [
 ];
 
 const Game = (): JSX.Element => {
+  const [gameField, setGameField] = useState(GAME_FIELD);
+
   const getCurrentPositionOnPath = (position: string) => {
     return MOVEMENT_PATH.indexOf(position);
   };
@@ -37,33 +39,29 @@ const Game = (): JSX.Element => {
     // Gets the position in the MOVEMENT_PATH
     const currentIndex = getCurrentPositionOnPath(coordinateString);
     // Gets coordinateString for next step from MOVEMENT_PATH
-    if (currentIndex === 35) return {nextXCoord: xCoord, nextYCoord: yCoord};
+    if (currentIndex === 35) return { nextXCoord: xCoord, nextYCoord: yCoord };
     const nextStepCoordinates = MOVEMENT_PATH[currentIndex + 1];
-    const nextXCoord = nextStepCoordinates.split("")[0];
-    const nextYCoord = nextStepCoordinates.split("")[1];
+    const nextXCoord = nextStepCoordinates.split('')[0];
+    const nextYCoord = nextStepCoordinates.split('')[1];
     // console.log("Next step will be: ", {nextXCoord, nextYCoord});
 
-    return {nextXCoord, nextYCoord};
+    return { nextXCoord, nextYCoord };
   };
 
   const updateField = (previousStep, nextStep) => {
-    console.log("Wat");
+    const currentGameField = [...gameField];
+    currentGameField[previousStep.y][previousStep.x] = 'O';
+    currentGameField[nextStep.nextYCoord][nextStep.nextXCoord] = 'M';
 
-    GAME_FIELD[previousStep.y][previousStep.x] = "O";
-    GAME_FIELD[nextStep.nextYCoord][nextStep.nextXCoord] = "M";
+    setGameField(currentGameField);
   };
 
-  const retrieveCoordinates = () => {
-    GAME_FIELD.map((fieldRow) => {
-      if (fieldRow.indexOf("M") >= 0) {
-        console.log("Current X: ", fieldRow.indexOf("M"), "Y: ", GAME_FIELD.indexOf(fieldRow));
-        console.log(
-          "Next step coordinates are: ",
-          move(fieldRow.indexOf("M"), GAME_FIELD.indexOf(fieldRow))
-        );
+  const moveM = () => {
+    gameField.map((fieldRow) => {
+      if (fieldRow.indexOf('M') >= 0) {
         updateField(
-          {x: fieldRow.indexOf("M"), y: GAME_FIELD.indexOf(fieldRow)},
-          move(fieldRow.indexOf("M"), GAME_FIELD.indexOf(fieldRow))
+          { x: fieldRow.indexOf('M'), y: gameField.indexOf(fieldRow) },
+          move(fieldRow.indexOf('M'), gameField.indexOf(fieldRow)),
         );
       }
     });
@@ -72,23 +70,23 @@ const Game = (): JSX.Element => {
   return (
     <div className="game">
       <div className="game--board">
-        {GAME_FIELD.map((fieldRow, rowIndex) =>
+        {gameField.map((fieldRow, rowIndex) =>
           fieldRow.map((fieldElement, elementIndex) => (
             <FieldElement
               key={rowIndex.toString() + elementIndex.toString()}
               content={fieldElement}
             />
-          ))
+          )),
         )}
-        <button onClick={() => retrieveCoordinates()}>Get M coordinates</button>
+        <button onClick={() => moveM()}>Move!</button>
       </div>
     </div>
   );
 };
 
-const FieldElement = (prop: {content: string}): JSX.Element => {
+const FieldElement = (prop: { content: string }): JSX.Element => {
   return (
-    <button className={classNames("game--field-element", prop.content)}>{prop.content}</button>
+    <button className={classNames('game--field-element', prop.content)}>{prop.content}</button>
   );
 };
 
