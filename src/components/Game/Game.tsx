@@ -4,7 +4,12 @@ import classNames from 'classnames';
 import './Game.scss';
 
 // TODO:
-// Some bug where it skips some steps at some point but doing multiple movements in one move --- seems to appear when moving down
+// Move on Game tick
+// Add hitpoints state
+// Add tower creation
+// Add block detection around the tower
+// Add shooting animation
+// Scoring
 
 const GAME_FIELD = [
   ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
@@ -56,28 +61,15 @@ const Game = (): JSX.Element => {
   };
 
   const moveM = () => {
-    console.log('gameField: ', gameField);
+    let currentMIndex;
 
     gameField.map((fieldRow) => {
-      console.log('Mapping');
-
       if (fieldRow.indexOf('M') >= 0) {
-        console.log(
-          'Updating: previousStep: X: ',
-          fieldRow.indexOf('M'),
-          'Y: ',
-          gameField.indexOf(fieldRow),
-        );
-        console.log(
-          'Updating: nextStep: ',
-          move(fieldRow.indexOf('M'), gameField.indexOf(fieldRow)),
-        );
-        updateField(
-          { x: fieldRow.indexOf('M'), y: gameField.indexOf(fieldRow) },
-          move(fieldRow.indexOf('M'), gameField.indexOf(fieldRow)),
-        );
+        currentMIndex = { x: fieldRow.indexOf('M'), y: gameField.indexOf(fieldRow) };
       }
     });
+
+    updateField({ x: currentMIndex.x, y: currentMIndex.y }, move(currentMIndex.x, currentMIndex.y));
   };
 
   return (
