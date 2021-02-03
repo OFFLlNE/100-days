@@ -1,54 +1,29 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
+import { GAME_FIELD, MOVEMENT_PATH } from './Game.contants';
 
 import './Game.scss';
 
 // TODO:
-// Move on Game tick
-// Add hitpoints state
 // Add tower creation
+
+// Move on Game tick
 // Add block detection around the tower
 // Add shooting animation
 // Scoring
 
-const GAME_FIELD = [
-  ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-  ['X', 'X', 'X', 'X', 'X', 'X', 'O', 'O', 'O', 'X'],
-  ['X', 'O', 'O', 'O', 'X', 'X', 'O', 'X', 'O', 'O'],
-  ['X', 'O', 'X', 'O', 'X', 'X', 'O', 'X', 'X', 'X'],
-  ['X', 'O', 'X', 'O', 'O', 'X', 'O', 'O', 'X', 'X'],
-  ['X', 'O', 'X', 'X', 'O', 'X', 'X', 'O', 'X', 'X'],
-  ['X', 'O', 'X', 'O', 'O', 'X', 'X', 'O', 'O', 'X'],
-  ['X', 'O', 'X', 'O', 'X', 'X', 'X', 'X', 'O', 'X'],
-  ['M', 'O', 'X', 'O', 'O', 'O', 'O', 'O', 'O', 'X'],
-  ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
-];
-
-// 35 steps
-const MOVEMENT_PATH = [
-  "08", "18", "17", "16", "15", "14", "13", "12", "22", "32", "33", "34", // eslint-disable-line
-  "44", "45", "46", "36", "37", "38", "48", "58", "68", "78", "88", "87", // eslint-disable-line
-  "86", "76", "75", "74", "64", "63", "62", "61", "71", "81", "82", "92"  // eslint-disable-line
-];
-
 const Game = (): JSX.Element => {
   const [gameField, setGameField] = useState(GAME_FIELD);
-
-  const getCurrentPositionOnPath = (position: string) => {
-    return MOVEMENT_PATH.indexOf(position);
-  };
+  const [playerHealth, setPlayerHealth] = useState(10);
+  const [money, setMoney] = useState(100);
+  const [wave, setWave] = useState(1);
 
   const move = (xCoord: number, yCoord: number) => {
-    // Gets the current position of passed in X and Y
-    const coordinateString = xCoord.toString() + yCoord.toString();
-    // Gets the position in the MOVEMENT_PATH
-    const currentIndex = getCurrentPositionOnPath(coordinateString);
-    // Gets coordinateString for next step from MOVEMENT_PATH
-    if (currentIndex === 35) return { nextXCoord: xCoord, nextYCoord: yCoord };
-    const nextStepCoordinates = MOVEMENT_PATH[currentIndex + 1];
+    const currentIndex = getCurrentPositionOnPath(xCoord, yCoord);
 
-    const nextXCoord = nextStepCoordinates.split('')[0];
-    const nextYCoord = nextStepCoordinates.split('')[1];
+    if (currentIndex === 35) return handleFinish();
+
+    const { nextXCoord, nextYCoord } = getNextStep(currentIndex);
 
     return { nextXCoord, nextYCoord };
   };
@@ -72,6 +47,15 @@ const Game = (): JSX.Element => {
     updateField({ x: currentMIndex.x, y: currentMIndex.y }, move(currentMIndex.x, currentMIndex.y));
   };
 
+  const loseOneLife = () => {
+    setPlayerHealth(playerHealth - 1);
+  };
+
+  const handleFinish = () => {
+    loseOneLife();
+    return moveToTheBeginning();
+  };
+
   return (
     <div className="game">
       <div className="game--board">
@@ -85,6 +69,11 @@ const Game = (): JSX.Element => {
         )}
         <button onClick={() => moveM()}>Move!</button>
       </div>
+      <div className="game--stats">
+        <p>Hitpoints left: {playerHealth}</p>
+        <p>Money left: {money}$</p>
+        <p>Current wave: {wave}</p>
+      </div>
     </div>
   );
 };
@@ -96,3 +85,20 @@ const FieldElement = (prop: { content: string }): JSX.Element => {
 };
 
 export default Game;
+
+function getCurrentPositionOnPath(xCoord: number, yCoord: number) {
+  const coordinateString = xCoord.toString() + yCoord.toString();
+  return MOVEMENT_PATH.indexOf(coordinateString);
+}
+
+function getNextStep(currentIndex) {
+  const nextStepCoordinates = MOVEMENT_PATH[currentIndex + 1];
+  const nextXCoord = nextStepCoordinates.split('')[0];
+  const nextYCoord = nextStepCoordinates.split('')[1];
+
+  return { nextXCoord, nextYCoord };
+}
+
+function moveToTheBeginning() {
+  return { nextXCoord: 0, nextYCoord: 8 };
+}
