@@ -6,17 +6,17 @@ describe('Calculator', () => {
   it('calculates the sum', () => {
     render(<Calculator />);
 
-    const addOperator = screen.getByLabelText('+');
-    const numberSeven = screen.getByLabelText('7');
-    const numberFive = screen.getByLabelText('5');
-    const equals = screen.getByLabelText('=');
+    const addOperator = screen.getByText('+');
+    const numberSeven = screen.getByText('7');
+    const numberFive = screen.getByText('5');
+    const equals = screen.getByText('=');
 
     fireEvent.click(numberFive);
     fireEvent.click(addOperator);
     fireEvent.click(numberSeven);
     fireEvent.click(equals);
 
-    const sumOfFiveAndSeven = screen.getByText('12');
+    const sumOfFiveAndSeven = screen.getByDisplayValue('12');
 
     expect(sumOfFiveAndSeven).toBeInTheDocument();
   });

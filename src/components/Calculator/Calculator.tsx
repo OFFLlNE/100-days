@@ -71,6 +71,7 @@ const Calculator = (): JSX.Element => {
           <input className="calculator--input-previous-value" value={previousInput} />
           <input
             className="calculator--input-current-value"
+            aria-label="current-value"
             value={currentInput}
             onChange={(e) => setCurrentInput(e.target.value)}
           />
