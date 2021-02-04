@@ -4,6 +4,7 @@
   "description": "100 Days trial",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "build": "webpack --mode=production --env production --progress",
     "dev": "webpack-cli serve --mode=development --env development --open --hot",
     "lint": "eslint './src/**/*.{ts,tsx}'",

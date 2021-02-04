@@ -68,4 +68,25 @@ describe('Calculator', () => {
 
     expect(screen.getByDisplayValue('5')).toBeInTheDocument();
   });
+
+  it('calculates the addition', () => {
+    render(<Calculator />);
+
+    const numberFive = screen.getByText('5');
+    const numberSeven = screen.getByText('7');
+    const clear = screen.getByText('AC');
+
+    fireEvent.click(numberFive);
+    fireEvent.click(numberSeven);
+    fireEvent.click(numberSeven);
+    fireEvent.click(numberSeven);
+
+    expect(screen.getByDisplayValue('5777')).toBeInTheDocument();
+
+    fireEvent.click(clear);
+
+    fireEvent.click(numberFive);
+
+    expect(screen.getByDisplayValue('5')).toBeInTheDocument();
+  });
 });
