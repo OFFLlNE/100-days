@@ -68,7 +68,7 @@ const Calculator = (): JSX.Element => {
     <div className="calculator">
       <div className="calculator--container">
         <div className="calculator--input-screen">
-          <input className="calculator--input-previous-value" value={previousInput} />
+          <input className="calculator--input-previous-value" value={previousInput} readOnly />
           <input
             className="calculator--input-current-value"
             aria-label="current-value"
@@ -88,7 +88,7 @@ const Calculator = (): JSX.Element => {
   );
 };
 
-const CalculatorButton = (prop: { content: string; onButtonClick: any }): JSX.Element => {
+const CalculatorButton = (prop: { content; onButtonClick }): JSX.Element => {
   return (
     <button onClick={() => prop.onButtonClick(prop.content)} className="calculator--button">
       {prop.content}
