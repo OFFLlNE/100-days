@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import './Calculator.scss';
-// Avoid letter input
-// Add operator to previousInput
-// Add tests, started with that: https://jestjs.io/docs/en/tutorial-react
 
 // eslint-disable-next-line
 const CALCULATOR_BUTTONS = ["1","2","3","*","4","5","6","/","7","8","9","+","AC","0","=", "-"];

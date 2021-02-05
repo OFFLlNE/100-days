@@ -28,3 +28,12 @@
   color: white;
   background-color: red;
 }
+
+.F {
+  color: aqua;
+  background-color: green;
+  &:hover {
+    background-color: rgb(183, 250, 183);
+    cursor: pointer;
+  }
+}

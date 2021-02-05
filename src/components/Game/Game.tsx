@@ -17,6 +17,7 @@ const Game = (): JSX.Element => {
   const [playerHealth, setPlayerHealth] = useState(10);
   const [money, setMoney] = useState(100);
   const [wave, setWave] = useState(1);
+  const [isPlacingTurret, setIsPlacingTurret] = useState(false);
 
   const move = (xCoord: number, yCoord: number) => {
     const currentIndex = getCurrentPositionOnPath(xCoord, yCoord);
@@ -64,10 +65,12 @@ const Game = (): JSX.Element => {
             <FieldElement
               key={rowIndex.toString() + elementIndex.toString()}
               content={fieldElement}
+              isPlacingTurret={isPlacingTurret}
             />
           )),
         )}
         <button onClick={() => moveM()}>Move!</button>
+        <button onClick={() => setIsPlacingTurret(true)}>Create Turret!</button>
       </div>
       <div className="game--stats">
         <p>Hitpoints left: {playerHealth}</p>
@@ -78,9 +81,17 @@ const Game = (): JSX.Element => {
   );
 };
 
-const FieldElement = (prop: { content: string }): JSX.Element => {
+const FieldElement = (prop: { content: string; isPlacingTurret: boolean }): JSX.Element => {
   return (
-    <button className={classNames('game--field-element', prop.content)}>{prop.content}</button>
+    <button
+      className={classNames(
+        'game--field-element',
+        prop.content === 'X' ? (prop.isPlacingTurret ? 'F' : 'X') : prop.content,
+      )}
+      onClick={(e) => console.log('Check if F => replace F with T which will be turret')}
+    >
+      {prop.content === 'X' ? (prop.isPlacingTurret ? 'F' : 'X') : prop.content}
+    </button>
   );
 };
 
