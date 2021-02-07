@@ -66,6 +66,7 @@ const Game = (): JSX.Element => {
               key={rowIndex.toString() + elementIndex.toString()}
               content={fieldElement}
               isPlacingTurret={isPlacingTurret}
+              turretInProgress={setIsPlacingTurret}
             />
           )),
         )}
@@ -81,14 +82,25 @@ const Game = (): JSX.Element => {
   );
 };
 
-const FieldElement = (prop: { content: string; isPlacingTurret: boolean }): JSX.Element => {
+const FieldElement = (prop: {
+  content: string;
+  isPlacingTurret: boolean;
+  turretInProgress;
+}): JSX.Element => {
   return (
     <button
       className={classNames(
         'game--field-element',
         prop.content === 'X' ? (prop.isPlacingTurret ? 'F' : 'X') : prop.content,
       )}
-      onClick={(e) => console.log('Check if F => replace F with T which will be turret')}
+      onClick={(e) => {
+        const buttonClickedOn = e.target as HTMLInputElement;
+        if (buttonClickedOn.innerHTML === 'F') {
+          buttonClickedOn.innerHTML = 'T';
+          // Need to actually change state of that button to class T and content T
+          prop.turretInProgress(false);
+        }
+      }}
     >
       {prop.content === 'X' ? (prop.isPlacingTurret ? 'F' : 'X') : prop.content}
     </button>
