@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import { GAME_FIELD, MOVEMENT_PATH } from './Game.contants';
 
 import './Game.scss';
+import { userInfo } from 'os';
 
 // TODO:
-// Add tower creation
 
 // Move on Game tick
 // Add block detection around the tower
@@ -18,6 +18,7 @@ const Game = (): JSX.Element => {
   const [money, setMoney] = useState(100);
   const [wave, setWave] = useState(1);
   const [isPlacingTurret, setIsPlacingTurret] = useState(false);
+  const [alert, setAlert] = useState('Welcome to my game');
 
   const move = (xCoord: number, yCoord: number) => {
     const currentIndex = getCurrentPositionOnPath(xCoord, yCoord);
@@ -57,35 +58,57 @@ const Game = (): JSX.Element => {
     return moveToTheBeginning();
   };
 
+  const placeTurret = ({ x, y }) => {
+    const currentGameField = [...gameField];
+    currentGameField[x][y] = 'T';
+    setGameField(currentGameField);
+  };
+
+  const startPlacingTurret = () => {
+    if (money >= 25) {
+      setIsPlacingTurret(true);
+      setMoney(money - 25);
+    } else {
+      setAlert('No money!');
+    }
+  };
+
   return (
-    <div className="game">
-      <div className="game--board">
-        {gameField.map((fieldRow, rowIndex) =>
-          fieldRow.map((fieldElement, elementIndex) => (
-            <FieldElement
-              key={rowIndex.toString() + elementIndex.toString()}
-              content={fieldElement}
-              isPlacingTurret={isPlacingTurret}
-              turretInProgress={setIsPlacingTurret}
-            />
-          )),
-        )}
-        <button onClick={() => moveM()}>Move!</button>
-        <button onClick={() => setIsPlacingTurret(true)}>Create Turret!</button>
+    <>
+      <h3>{alert}</h3>
+      <div className="game">
+        <div className="game--board">
+          {gameField.map((fieldRow, rowIndex) =>
+            fieldRow.map((fieldElement, elementIndex) => (
+              <FieldElement
+                key={rowIndex.toString() + elementIndex.toString()}
+                coordinateString={rowIndex.toString() + elementIndex.toString()}
+                content={fieldElement}
+                isPlacingTurret={isPlacingTurret}
+                turretInProgress={setIsPlacingTurret}
+                placeTurret={placeTurret}
+              />
+            )),
+          )}
+        </div>
+        <div className="game--stats">
+          <p>Hitpoints left: {playerHealth}</p>
+          <p>Money left: {money}$</p>
+          <p>Current wave: {wave}</p>
+          <button onClick={() => moveM()}>Move!</button>
+          <button onClick={() => startPlacingTurret()}>Create Turret!</button>
+        </div>
       </div>
-      <div className="game--stats">
-        <p>Hitpoints left: {playerHealth}</p>
-        <p>Money left: {money}$</p>
-        <p>Current wave: {wave}</p>
-      </div>
-    </div>
+    </>
   );
 };
 
 const FieldElement = (prop: {
+  coordinateString: string;
   content: string;
   isPlacingTurret: boolean;
   turretInProgress;
+  placeTurret;
 }): JSX.Element => {
   return (
     <button
@@ -96,8 +119,10 @@ const FieldElement = (prop: {
       onClick={(e) => {
         const buttonClickedOn = e.target as HTMLInputElement;
         if (buttonClickedOn.innerHTML === 'F') {
-          buttonClickedOn.innerHTML = 'T';
-          // Need to actually change state of that button to class T and content T
+          prop.placeTurret({
+            x: prop.coordinateString.split('')[0],
+            y: prop.coordinateString.split('')[1],
+          });
           prop.turretInProgress(false);
         }
       }}
