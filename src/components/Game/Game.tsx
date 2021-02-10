@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { GAME_FIELD, MOVEMENT_PATH } from './Game.contants';
 
 import './Game.scss';
-import { userInfo } from 'os';
 
 // TODO:
 
@@ -26,6 +25,12 @@ const Game = (): JSX.Element => {
     if (currentIndex === 35) return handleFinish();
 
     const { nextXCoord, nextYCoord } = getNextStep(currentIndex);
+
+    const surroundingCoords = getSurroundingCoordinates(
+      parseFloat(nextXCoord),
+      parseFloat(nextYCoord),
+    );
+    console.log('surroundingCoords: ', surroundingCoords);
 
     return { nextXCoord, nextYCoord };
   };
@@ -149,4 +154,17 @@ function getNextStep(currentIndex) {
 
 function moveToTheBeginning() {
   return { nextXCoord: 0, nextYCoord: 8 };
+}
+
+function getSurroundingCoordinates(x: number, y: number): Array<string> {
+  const possibleXCoordinates = [x, x - 1, x + 1].filter((coord) => 0 <= coord && coord < 10);
+  const possibleYCoordinates = [y, y - 1, y + 1].filter((coord) => coord >= 0);
+  const possibleCoordinates = [];
+  possibleXCoordinates.forEach((xCoord) => {
+    possibleYCoordinates.forEach((yCoord) => {
+      possibleCoordinates.push(xCoord + '' + yCoord);
+    });
+  });
+
+  return possibleCoordinates;
 }
