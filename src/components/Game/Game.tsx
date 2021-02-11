@@ -7,7 +7,8 @@ import './Game.scss';
 // TODO:
 
 // Move on Game tick
-// Add block detection around the tower
+// Add hitpoints to enemy.
+// Start killing the enemy based on how many turrets there are around
 // Add shooting animation
 // Scoring
 
@@ -18,6 +19,7 @@ const Game = (): JSX.Element => {
   const [wave, setWave] = useState(1);
   const [isPlacingTurret, setIsPlacingTurret] = useState(false);
   const [alert, setAlert] = useState('Welcome to my game');
+  const [turretCoordinates, setTurretCoordinates] = useState([]);
 
   const move = (xCoord: number, yCoord: number) => {
     const currentIndex = getCurrentPositionOnPath(xCoord, yCoord);
@@ -26,16 +28,17 @@ const Game = (): JSX.Element => {
 
     const { nextXCoord, nextYCoord } = getNextStep(currentIndex);
 
-    const surroundingCoords = getSurroundingCoordinates(
-      parseFloat(nextXCoord),
-      parseFloat(nextYCoord),
-    );
-    console.log('surroundingCoords: ', surroundingCoords);
+    const surroundingCoords = getSurroundingCoordinates(nextXCoord, nextYCoord);
+    const countOfTurretsSurrounding = countArrayMatches(surroundingCoords, turretCoordinates);
+    console.log(countOfTurretsSurrounding);
 
     return { nextXCoord, nextYCoord };
   };
 
-  const updateField = (previousStep, nextStep) => {
+  const updateField = (
+    previousStep: { x: number; y: number },
+    nextStep: { nextXCoord: number; nextYCoord: number },
+  ) => {
     const currentGameField = [...gameField];
     currentGameField[previousStep.y][previousStep.x] = 'O';
     currentGameField[nextStep.nextYCoord][nextStep.nextXCoord] = 'M';
@@ -60,6 +63,7 @@ const Game = (): JSX.Element => {
 
   const handleFinish = () => {
     loseOneLife();
+    setWave(wave + 1);
     return moveToTheBeginning();
   };
 
@@ -67,6 +71,10 @@ const Game = (): JSX.Element => {
     const currentGameField = [...gameField];
     currentGameField[x][y] = 'T';
     setGameField(currentGameField);
+
+    const currentTurrets = [...turretCoordinates];
+    currentTurrets.push(y + x);
+    setTurretCoordinates(currentTurrets);
   };
 
   const startPlacingTurret = () => {
@@ -139,24 +147,24 @@ const FieldElement = (prop: {
 
 export default Game;
 
-function getCurrentPositionOnPath(xCoord: number, yCoord: number) {
+const getCurrentPositionOnPath = (xCoord: number, yCoord: number) => {
   const coordinateString = xCoord.toString() + yCoord.toString();
   return MOVEMENT_PATH.indexOf(coordinateString);
-}
+};
 
-function getNextStep(currentIndex) {
+const getNextStep = (currentIndex: number): { nextXCoord: number; nextYCoord: number } => {
   const nextStepCoordinates = MOVEMENT_PATH[currentIndex + 1];
-  const nextXCoord = nextStepCoordinates.split('')[0];
-  const nextYCoord = nextStepCoordinates.split('')[1];
+  const nextXCoord = parseFloat(nextStepCoordinates.split('')[0]);
+  const nextYCoord = parseFloat(nextStepCoordinates.split('')[1]);
 
   return { nextXCoord, nextYCoord };
-}
+};
 
-function moveToTheBeginning() {
+const moveToTheBeginning = () => {
   return { nextXCoord: 0, nextYCoord: 8 };
-}
+};
 
-function getSurroundingCoordinates(x: number, y: number): Array<string> {
+const getSurroundingCoordinates = (x: number, y: number): Array<string> => {
   const possibleXCoordinates = [x, x - 1, x + 1].filter((coord) => 0 <= coord && coord < 10);
   const possibleYCoordinates = [y, y - 1, y + 1].filter((coord) => coord >= 0);
   const possibleCoordinates = [];
@@ -167,4 +175,8 @@ function getSurroundingCoordinates(x: number, y: number): Array<string> {
   });
 
   return possibleCoordinates;
-}
+};
+
+const countArrayMatches = (a1: Array<string>, a2: Array<string>): number => {
+  return a1.filter((v) => a2.includes(v)).length;
+};
