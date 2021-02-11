@@ -29,7 +29,10 @@ const Game = (): JSX.Element => {
     const { nextXCoord, nextYCoord } = getNextStep(currentIndex);
 
     const surroundingCoords = getSurroundingCoordinates(nextXCoord, nextYCoord);
-    const countOfTurretsSurrounding = countArrayMatches(surroundingCoords, turretCoordinates);
+    const countOfTurretsSurrounding = getTurretCoordinateMatches(
+      surroundingCoords,
+      turretCoordinates,
+    ).length;
     console.log(countOfTurretsSurrounding);
 
     return { nextXCoord, nextYCoord };
@@ -177,6 +180,6 @@ const getSurroundingCoordinates = (x: number, y: number): Array<string> => {
   return possibleCoordinates;
 };
 
-const countArrayMatches = (a1: Array<string>, a2: Array<string>): number => {
-  return a1.filter((v) => a2.includes(v)).length;
+const getTurretCoordinateMatches = (a1: Array<string>, a2: Array<string>): Array<string> => {
+  return a1.filter((v) => a2.includes(v));
 };
