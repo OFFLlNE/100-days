@@ -7,8 +7,6 @@ import './Game.scss';
 // TODO:
 
 // Move on Game tick
-// Add hitpoints to enemy.
-// Start killing the enemy based on how many turrets there are around
 // Add shooting animation
 // Scoring
 
@@ -20,11 +18,13 @@ const Game = (): JSX.Element => {
   const [isPlacingTurret, setIsPlacingTurret] = useState(false);
   const [alert, setAlert] = useState('Welcome to my game');
   const [turretCoordinates, setTurretCoordinates] = useState([]);
+  const [enemyHP, setEnemyHP] = useState(10);
+  const [defaultEnemyHP, setDefaultEnemyHP] = useState(10);
 
   const move = (xCoord: number, yCoord: number) => {
     const currentIndex = getCurrentPositionOnPath(xCoord, yCoord);
 
-    if (currentIndex === 35) return handleFinish();
+    if (currentIndex === 35) return handleFinish('lostLife');
 
     const { nextXCoord, nextYCoord } = getNextStep(currentIndex);
 
@@ -33,6 +33,8 @@ const Game = (): JSX.Element => {
       surroundingCoords,
       turretCoordinates,
     ).length;
+    if (enemyHP <= countOfTurretsSurrounding) return handleFinish('killedMonster');
+    setEnemyHP(enemyHP - countOfTurretsSurrounding);
     console.log(countOfTurretsSurrounding);
 
     return { nextXCoord, nextYCoord };
@@ -64,8 +66,16 @@ const Game = (): JSX.Element => {
     setPlayerHealth(playerHealth - 1);
   };
 
-  const handleFinish = () => {
-    loseOneLife();
+  const handleFinish = (finishReason: string) => {
+    if (finishReason === 'lostLife') {
+      loseOneLife();
+      setEnemyHP(defaultEnemyHP);
+    } else if (finishReason === 'killedMonster') {
+      const newMonsterDefaultHP = defaultEnemyHP * 2;
+      setDefaultEnemyHP(newMonsterDefaultHP);
+      setEnemyHP(newMonsterDefaultHP);
+      setMoney(money + 100);
+    }
     setWave(wave + 1);
     return moveToTheBeginning();
   };
@@ -111,6 +121,7 @@ const Game = (): JSX.Element => {
           <p>Hitpoints left: {playerHealth}</p>
           <p>Money left: {money}$</p>
           <p>Current wave: {wave}</p>
+          <p>Monster health: {enemyHP}</p>
           <button onClick={() => moveM()}>Move!</button>
           <button onClick={() => startPlacingTurret()}>Create Turret!</button>
         </div>
