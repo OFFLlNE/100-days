@@ -5,10 +5,9 @@ import { GAME_FIELD, MOVEMENT_PATH } from './Game.contants';
 import './Game.scss';
 
 // TODO:
-
 // Move on Game tick
-// Add shooting animation
-// Scoring
+// Start wave button
+// Stop animation after round end
 
 const Game = (): JSX.Element => {
   const [gameField, setGameField] = useState(GAME_FIELD);
@@ -20,6 +19,7 @@ const Game = (): JSX.Element => {
   const [turretCoordinates, setTurretCoordinates] = useState([]);
   const [enemyHP, setEnemyHP] = useState(10);
   const [defaultEnemyHP, setDefaultEnemyHP] = useState(10);
+  const [shootingTurrets, setShootingTurrets] = useState([]);
 
   const move = (xCoord: number, yCoord: number) => {
     const currentIndex = getCurrentPositionOnPath(xCoord, yCoord);
@@ -29,13 +29,11 @@ const Game = (): JSX.Element => {
     const { nextXCoord, nextYCoord } = getNextStep(currentIndex);
 
     const surroundingCoords = getSurroundingCoordinates(nextXCoord, nextYCoord);
-    const countOfTurretsSurrounding = getTurretCoordinateMatches(
-      surroundingCoords,
-      turretCoordinates,
-    ).length;
+    const surroundingTurrets = getTurretCoordinateMatches(surroundingCoords, turretCoordinates);
+    setShootingTurrets(surroundingTurrets);
+    const countOfTurretsSurrounding = surroundingTurrets.length;
     if (enemyHP <= countOfTurretsSurrounding) return handleFinish('killedMonster');
     setEnemyHP(enemyHP - countOfTurretsSurrounding);
-    console.log(countOfTurretsSurrounding);
 
     return { nextXCoord, nextYCoord };
   };
@@ -71,10 +69,10 @@ const Game = (): JSX.Element => {
       loseOneLife();
       setEnemyHP(defaultEnemyHP);
     } else if (finishReason === 'killedMonster') {
-      const newMonsterDefaultHP = defaultEnemyHP * 2;
+      const newMonsterDefaultHP = defaultEnemyHP * 1.5;
       setDefaultEnemyHP(newMonsterDefaultHP);
       setEnemyHP(newMonsterDefaultHP);
-      setMoney(money + 100);
+      setMoney(money + 50);
     }
     setWave(wave + 1);
     return moveToTheBeginning();
@@ -113,6 +111,7 @@ const Game = (): JSX.Element => {
                 isPlacingTurret={isPlacingTurret}
                 turretInProgress={setIsPlacingTurret}
                 placeTurret={placeTurret}
+                shootingTurrets={shootingTurrets}
               />
             )),
           )}
@@ -136,12 +135,16 @@ const FieldElement = (prop: {
   isPlacingTurret: boolean;
   turretInProgress;
   placeTurret;
+  shootingTurrets: Array<string>;
 }): JSX.Element => {
   return (
     <button
       className={classNames(
         'game--field-element',
         prop.content === 'X' ? (prop.isPlacingTurret ? 'F' : 'X') : prop.content,
+        prop.shootingTurrets.includes(prop.coordinateString.split('').reverse().join(''))
+          ? 'shooting-animation'
+          : '',
       )}
       onClick={(e) => {
         const buttonClickedOn = e.target as HTMLInputElement;

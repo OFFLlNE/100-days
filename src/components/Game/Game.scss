@@ -54,9 +54,19 @@
   }
 }
 
+@keyframes example {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .T {
-  color: black;
-  background-color: brown;
+  color: red;
+  background-color: black;
+}
+
+.shooting-animation {
+  animation: example 0.25s linear infinite;
 }
 
 h3 {
