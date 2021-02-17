@@ -7,7 +7,6 @@ import './Game.scss';
 // TODO:
 // Move on Game tick
 // Start wave button
-// Stop animation after round end
 
 const Game = (): JSX.Element => {
   const [gameField, setGameField] = useState(GAME_FIELD);
@@ -75,6 +74,7 @@ const Game = (): JSX.Element => {
       setMoney(money + 50);
     }
     setWave(wave + 1);
+    setShootingTurrets([]);
     return moveToTheBeginning();
   };
 
