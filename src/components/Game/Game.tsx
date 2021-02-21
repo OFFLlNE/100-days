@@ -5,8 +5,9 @@ import { GAME_FIELD, MOVEMENT_PATH } from './Game.contants';
 import './Game.scss';
 
 // TODO:
-// Move on Game tick
-// Start wave button
+// Why it regens?
+// Start cleaning it up
+// Check canvas stuff
 
 const Game = (): JSX.Element => {
   const [gameField, setGameField] = useState(GAME_FIELD);
@@ -19,6 +20,8 @@ const Game = (): JSX.Element => {
   const [enemyHP, setEnemyHP] = useState(10);
   const [defaultEnemyHP, setDefaultEnemyHP] = useState(10);
   const [shootingTurrets, setShootingTurrets] = useState([]);
+
+  let gameTicks;
 
   const move = (xCoord: number, yCoord: number) => {
     const currentIndex = getCurrentPositionOnPath(xCoord, yCoord);
@@ -73,8 +76,8 @@ const Game = (): JSX.Element => {
       setEnemyHP(newMonsterDefaultHP);
       setMoney(money + 50);
     }
-    setWave(wave + 1);
     setShootingTurrets([]);
+    clearInterval(gameTicks);
     return moveToTheBeginning();
   };
 
@@ -95,6 +98,13 @@ const Game = (): JSX.Element => {
     } else {
       setAlert('No money!');
     }
+  };
+
+  const startWave = () => {
+    setWave(wave + 1);
+    gameTicks = setInterval(() => {
+      moveM();
+    }, 500);
   };
 
   return (
@@ -122,6 +132,7 @@ const Game = (): JSX.Element => {
           <p>Current wave: {wave}</p>
           <p>Monster health: {enemyHP}</p>
           <button onClick={() => moveM()}>Move!</button>
+          <button onClick={() => startWave()}>Start Wave</button>
           <button onClick={() => startPlacingTurret()}>Create Turret!</button>
         </div>
       </div>
